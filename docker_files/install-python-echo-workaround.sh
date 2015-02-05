@@ -30,6 +30,7 @@ After=docker.service
 
 [Service]
 Type=oneshot
+Environment="HOME=/root"
 ExecStartPre=-/usr/bin/docker kill python-echo
 ExecStartPre=-/usr/bin/docker rm python-echo
 ExecStartPre=/usr/bin/docker build -t miabbott/python-echo /var/opt/python-echo/
