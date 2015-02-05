@@ -1,0 +1,3 @@
+FROM rhel7
+RUN yum -y update; yum -y install iputils; yum -y clean all
+ENTRYPOINT [ "/bin/bash" ]
