@@ -1,0 +1,5 @@
+beautifulsoup4
+python-glanceclient==0.13.1
+python-keystoneclient
+python-novaclient
+requests
