@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import os.path
 import re
 import subprocess
 import sys
@@ -33,6 +32,8 @@ m = image_name_re.search(args.image)
 if m:
     image_name = m.group(1)
     image_type = m.group(2)
+else:
+    sys.exit("ERROR: Image name does not look recognizable")
 
 if args.clean:
     for f in file_list:
