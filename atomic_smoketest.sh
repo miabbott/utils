@@ -5,24 +5,30 @@ DATA_FILE=atomic_smoke_output.txt
 FULL_PATH=$DATA_DIR/$DATA_FILE
 KEY_PKGS="docker etcd flannel kernel kubernetes subscription-manager"
 
-mkdir -p $DATA_DIR
-chcon -Rt svirt_sandbox_file_t $DATA_DIR
+if [ ! -d "$DATA_DIR" ]; then
+    mkdir -p $DATA_DIR
+    chcon -Rt svirt_sandbox_file_t $DATA_DIR
+fi
 
-echo -e "Atomic Host Status:\n" > $FULL_PATH
+if [ -e "$FULL_PATH" ]; then
+    rm $FULL_PATH
+fi
 
-atomic host status >> $FULL_PATH
+exec 1>> $FULL_PATH
 
-echo -e "\nKey Packages:\n" >> $FULL_PATH
+echo "cat /etc/redhat-release"
+cat /etc/redhat-release
 
-rpm -q $KEY_PKGS >> $FULL_PATH
+echo -e "\nAtomic Host Status:\n"
+atomic host status
 
-rpm -qa | grep atomic | sort >> $FULL_PATH
+echo -e "\nKey Packages:\n"
+rpm -q $KEY_PKGS
+rpm -qa | grep atomic | sort
 
 rpm_count=$(rpm -qa | wc -l)
 
-echo -e "\nTotal RPM Count: $rpm_count\n" >> $FULL_PATH
+echo -e "\nTotal RPM Count: $rpm_count\n"
 
-echo -e "Full RPM List: \n" >> $FULL_PATH
-
-rpm -qa | sort >> $FULL_PATH
-
+echo -e "Full RPM List: \n"
+rpm -qa | sort
