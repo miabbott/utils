@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+'''
+TODO: support ISO installs
+TODO: auto-generate user-data (copy in id_rsa.pub, etc)
+'''
+
 import argparse
 import os
 import re
