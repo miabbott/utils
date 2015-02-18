@@ -3,7 +3,7 @@
 DATA_DIR=/var/qe
 DATA_FILE=atomic_smoke_output.txt
 FULL_PATH=$DATA_DIR/$DATA_FILE
-KEY_PKGS="docker etcd flannel kernel kubernetes subscription-manager"
+KEY_PKGS="docker docker-python docker-storage-setup etcd flannel kernel kubernetes subscription-manager"
 
 if [ ! -d "$DATA_DIR" ]; then
     mkdir -p $DATA_DIR
