@@ -35,7 +35,7 @@ echo -n "Testing version: "
 grep Atomic $GRUBFILE | awk 'BEGIN {FS="'"'"'"}{print $2}'
 echo -en "\nTest Platform: "
 virt-what
-echo "\nBIOS Version: $BIOS_VERSION\n"
+echo -e "\nBIOS Version: $BIOS_VERSION\n"
 
 echo "cat /etc/redhat-release"
 cat /etc/redhat-release
