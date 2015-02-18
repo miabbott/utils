@@ -3,6 +3,7 @@
 '''
 TODO: support ISO installs
 TODO: auto-generate user-data (copy in id_rsa.pub, etc)
+TODO: remove existing guests via 'virsh undefine'
 '''
 
 import argparse
