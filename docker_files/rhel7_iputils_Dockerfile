@@ -3,5 +3,5 @@ MAINTAINER Micah Abbbot <micah@redhat.com>
 RUN yum --disablerepo=\* --enablerepo=rhel-7-server-rpms install -y yum-utils
 RUN yum-config-manager --disable \*
 RUN yum-config-manager --enable rhel-7-server-rpms
-RUN yum update -y; yum install -y iputils; yum clean all"
+RUN yum update -y; yum install -y iputils; yum clean all
 ENTRYPOINT [ "/bin/bash" ]
