@@ -5,6 +5,7 @@ TODO: support ISO installs
 TODO: auto-generate user-data (copy in id_rsa.pub, etc)
 TODO: remove existing guests via 'virsh undefine'
 TODO: fix clean option to only require image name
+TODO: cloud-init ISO must use strict filenames 'meta-data' and 'user-data'
 '''
 
 import argparse
