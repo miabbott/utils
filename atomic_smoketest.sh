@@ -6,6 +6,8 @@ FULL_PATH=$DATA_DIR/$DATA_FILE
 KEY_PKGS="docker docker-python docker-storage-setup etcd flannel kernel kubernetes subscription-manager"
 BIOS_VERSION=UNKNOWN
 GRUBFILE=UNKNOWN
+KEY_ID="199e2f91fd431d51"
+SMOKE_STATUS="0"
 
 # Determine if system is EFI or not
 if [ -f /boot/grub2/grub.cfg ];then
@@ -37,11 +39,37 @@ echo -en "\nTest Platform: "
 virt-what
 echo -e "\nBIOS Version: $BIOS_VERSION\n"
 
-echo "cat /etc/redhat-release"
+grep -q "Red Hat Enterprise Linux Atomic Host" /etc/redhat-release
+if [ $? -ne 0 ]
+then
+    SMOKE_STATUS="1"
+    echo -e "\nERROR in /etc/redhat-release\n"
+fi
+echo "# cat /etc/redhat-release"
 cat /etc/redhat-release
 
 echo -e "\nAtomic Host Status:\n"
 atomic host status
+
+echo -e "\nVerify Signature on Installed Packages:\n"
+failed_pkgs=""
+for pkg in `rpm -qa`
+do
+    pkg_info=`rpm -qi $pkg`
+    if [[ $pkg_info != *$KEY_ID* ]]
+    then
+        SMOKE_STATUS="1"
+        failed_pkgs="$failed_pkgs\n$pkg"
+    fi
+done
+if [ -n "$failed_pkgs" ]
+then
+    echo -e "FAILED!\n"
+    echo -e "Packages with Invalid Signatures:\n"
+    echo -e "$failed_pkgs"
+else
+    echo -e "PASSED!"
+fi
 
 echo -e "\nKey Packages:\n"
 rpm -q $KEY_PKGS
@@ -53,3 +81,8 @@ echo -e "\nTotal RPM Count: $rpm_count\n"
 
 echo -e "Full RPM List: \n"
 rpm -qa | sort
+
+if [ "$SMOKE_STATUS" == "1" ]
+then
+    touch $DATA_DIR/atomic_smoke_failed
+fi
