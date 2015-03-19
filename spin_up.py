@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 
 def generate_ci_iso(name=None, user_data=None, meta_data=None, image_dir=None):
@@ -109,17 +110,19 @@ for n in range(num_instances):
                 'backing_file=%s' % fp_to_image, fp_to_instance]
     qemu_p = subprocess.Popen(qemu_cmd, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
-    out, err = qemu_p.communicate()
+    qemu_out, qemu_err = qemu_p.communicate()
     if qemu_p.returncode != 0:
-        print err
+        print qemu_err
+        continue
 
     print "Creating new cloud-init ISO"
     fp_to_ci_iso = generate_ci_iso(name=instance_name,
                                    user_data=args.user_data)
     if fp_to_ci_iso == 1:
-        sys.exit("ERROR: unable to generate cidata ISO")
+        print "ERROR: unable to generate cidata ISO"
+        continue
 
-    print "Starting VM using new instance"
+    print "Starting VM using new instance with name %s" % instance_name
     virt_cmd = ['/usr/bin/virt-install', '--import', '--name', instance_name,
                 '--ram', '2048', '--disk',
                 'path=%s,format=qcow2,bus=virtio' % fp_to_instance,
@@ -128,6 +131,48 @@ for n in range(num_instances):
                 '--os-variant', 'rhel7', '--noautoconsole']
     virt_p = subprocess.Popen(virt_cmd, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
-    out, err, = virt_p.communicate()
+    virt_out, virt_err, = virt_p.communicate()
     if virt_p.returncode != 0:
-        print err
+        print virt_err
+        continue
+
+    virsh_cmd = ['/usr/bin/virsh', 'dumpxml', instance_name]
+    virsh_p = subprocess.Popen(virsh_cmd, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    virsh_out, virsh_err = virsh_p.communicate()
+    if virsh_p.returncode != 0:
+        print virsh_err
+        continue
+
+    mac_re = re.compile(r'mac address=\''
+                        r'(?P<mac_address>([0-9a-f]{2}:){5}([0-9a-f]{2}))')
+    m = mac_re.search(virsh_out)
+    if m is not None:
+        mac_addr = m.group('mac_address')
+    else:
+        print "ERROR: unable to determine MAC address for domain"
+        continue
+
+    print "Waiting for ARP table to be populated",
+    sys.stdout.flush()
+    populated = None
+    while(populated is None):
+        ip_cmd = ['/usr/sbin/ip', 'neigh', 'show', 'dev', 'virbr0']
+        ip_p = subprocess.Popen(ip_cmd, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        ip_out, ip_err = ip_p.communicate()
+        if ip_p.returncode != 0:
+            print ip_err
+            continue
+
+        for l in ip_out.split('\n'):
+            if mac_addr in l:
+                populated = 1
+                ip_addr = l.split()[0]
+
+        print ".",
+        sys.stdout.flush()
+        time.sleep(1)
+
+    print "\n\tMAC Address: %s" % mac_addr
+    print "\tIP Address: %s" % ip_addr
