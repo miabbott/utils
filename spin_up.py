@@ -156,7 +156,7 @@ for n in range(num_instances):
     print "Waiting for ARP table to be populated",
     sys.stdout.flush()
     populated = None
-    while(populated is None):
+    while populated is None:
         ip_cmd = ['/usr/sbin/ip', 'neigh', 'show', 'dev', 'virbr0']
         ip_p = subprocess.Popen(ip_cmd, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
