@@ -32,9 +32,17 @@ fi
 # Send all STDOUT to file
 exec 1>> $FULL_PATH
 
-# Test Atomic host installation, so there should only be one match
-echo -n "Testing version: "
-grep Atomic $GRUBFILE | awk 'BEGIN {FS="'"'"'"}{print $2}'
+# Test the boot entry for mention of Atomic
+grep Atomic $GRUBFILE
+if [ $? -ne 0 ]
+then
+    SMOKE_STATUS="1"
+    echo -e "\nERROR! $GRUBFILE does not have any mention of RHEL Atomic Host"
+else
+    echo -n "Testing version: "
+    grep -m 1 Atomic $GRUBFILE | awk 'BEGIN {FS="'"'"'"}{print $2}'
+fi
+
 echo -en "\nTest Platform: "
 virt-what
 echo -e "\nBIOS Version: $BIOS_VERSION\n"
