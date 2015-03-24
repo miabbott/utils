@@ -74,7 +74,7 @@ if [ -n "$failed_pkgs" ]
 then
     echo -e "FAILED!\n"
     echo -e "Packages with Invalid Signatures:\n"
-    echo -e "$failed_pkgs"
+    echo -e "$failed_pkgs" | sort
 else
     echo -e "PASSED!"
 fi
