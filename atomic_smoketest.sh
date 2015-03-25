@@ -33,7 +33,7 @@ fi
 exec 1>> $FULL_PATH
 
 # Test the boot entry for mention of Atomic
-grep Atomic $GRUBFILE
+grep -q Atomic $GRUBFILE
 if [ $? -ne 0 ]
 then
     SMOKE_STATUS="1"
