@@ -24,7 +24,6 @@ fi
 cat > "$SERVICEFILE" << EOF
 [Unit]
 Description=Python Echo App
-Author=Micah Abbott <miabbott@redhat.com>
 Requires=docker.service
 After=docker.service
 
