@@ -38,6 +38,7 @@ if [ $? -ne 0 ]
 then
     SMOKE_STATUS="1"
     echo -e "\nERROR! $GRUBFILE does not have any mention of RHEL Atomic Host"
+    echo -e "\nSee Bugzilla 1204194 - https://bugzilla.redhat.com/show_bug.cgi?id=1204194"
 else
     echo -n "Testing version: "
     grep -m 1 Atomic $GRUBFILE | awk 'BEGIN {FS="'"'"'"}{print $2}'
