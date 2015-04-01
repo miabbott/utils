@@ -18,8 +18,8 @@ for l in $(seq $LOOP); do
         echo "Attempting upgrade iteration $l of $LOOP with a delay of $DELAY seconds"
         timeout --signal=SIGINT $DELAY $UPGRADE
         UPGRADE_RV=$?
-        if [ "$UPGRADE_RV" -ne 124 ]; then
-                echo "ERROR! The 'atomic host upgrade' command did not exit due to SIGINT"
+        if [ "$UPGRADE_RV" -ne 124 ] || [ "$UPGRADE_RV" -ne 0 ]; then
+                echo "ERROR! The 'atomic host upgrade' command did not exit successfully or via SIGINT"
                 echo "ERROR! The reported exit status was: $UPGRADE_RV"
                 break
         fi
