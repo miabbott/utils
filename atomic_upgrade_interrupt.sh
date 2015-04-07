@@ -13,6 +13,11 @@ else
 fi
 
 UPGRADE='atomic host upgrade'
+FAILED_FILE='/var/qe/atomic_upgrade_failed'
+
+if [ -e "$FAILED_FILE" ]; then
+    rm $FAILED_FILE
+fi
 
 for l in $(seq $LOOP); do
         echo "Attempting upgrade iteration $l of $LOOP with a delay of $DELAY seconds"
@@ -21,6 +26,7 @@ for l in $(seq $LOOP); do
         if [ "$UPGRADE_RV" -ne 124 ] && [ "$UPGRADE_RV" -ne 0 ]; then
                 echo "ERROR! The 'atomic host upgrade' command did not exit successfully or via SIGINT"
                 echo "ERROR! The reported exit status was: $UPGRADE_RV"
+                touch /var/qe/atomic_upgrade_failed
                 break
         fi
         sleep 5
