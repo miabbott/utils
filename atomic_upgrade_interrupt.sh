@@ -27,7 +27,7 @@ for l in $(seq $LOOP); do
                 echo "ERROR! The 'atomic host upgrade' command did not exit successfully or via SIGINT"
                 echo "ERROR! The reported exit status was: $UPGRADE_RV"
                 touch /var/qe/atomic_upgrade_failed
-                break
+                exit $UPGRADE_RV
         fi
         sleep 5
         echo -e "\n"
