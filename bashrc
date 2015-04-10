@@ -47,3 +47,11 @@ alias flush-arp="ip -s -s neigh flush all"
 # Use 'sudo' with aliases
 # http://askubuntu.com/a/22043
 alias sudo="sudo "
+
+# Retrieve the IP address for a VM
+function GetVmIp()
+{
+    MAC=`sudo virsh dumpxml $1 | grep 'mac address' | awk -F\' '{print $2}'`
+    ip neigh | grep $MAC | awk '{print $1}'
+}
+alias get-vm-ip=GetVmIp
