@@ -55,3 +55,7 @@ target/
 
 # PyCharm files
 .idea
+
+# Dockerfile resources
+docker_files/resources/
+
