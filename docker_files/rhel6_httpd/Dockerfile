@@ -1,5 +1,5 @@
 FROM rhel6
-MAINTAINER Micah Abbbot <micah@redhat.com>
+MAINTAINER Micah Abbott <micah@redhat.com>
 RUN yum --disablerepo=\* --enablerepo=rhel-6-server-rpms install -y yum-utils
 RUN yum-config-manager --disable \*
 RUN yum-config-manager --enable rhel-6-server-rpms
